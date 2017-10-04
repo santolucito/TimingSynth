@@ -1,0 +1,36 @@
+% what to study? 
+
+%\begin{itemize}
+%    \item 
+%\end{itemize}
+\subsection{Threat Model}
+
+We consider an attacker that attempts to destabilize a vehicle platoon by changing the gains (parameters) of the control law (PD controller) of a follower vehicle. Under the assumption that the attacker can modify one of the follower vehicles controller and the remaining victim follower vehicles have the same control law, an attack on the vehicle platoon can cause collision with the leader vehicle or cause traffic-flow instability.   
+
+
+
+% Also, consider the case where multiple follower vehicles are compromised to effect global string stability because one vehicle cannot deviate many follower vehicles. [from paper rejected from NDSS] 
+
+\subsection{Coalition Games of Incomplete Information}
+
+\subsection{Safety Games}
+
+
+\subsection{Problem Definition}
+
+Formally, we want to make the following guarantee of the synthesized controller.
+\cmark{just a start so we can agree on the problem}
+
+\begin{align*}
+    \exists s &\in \mathbb{R}.\\
+    &\frac{\cardset{c \in Car \mid attacked(c)}} {\cardset{c \in Car}} < s\\
+    &\implies\\
+    \always\ \big( & \forall c \in Car.\ \forall c' \in Car.\\
+    &\neg collision(c,c')\big)
+\end{align*}
+
+\textit{Controller Synthesis:} ``Given a model for a plant, to construct a model for a controller such that the behaviors resulting from parallel composition of the two models respects a given specification. Controllers can be synthesized as winning strategies in a graph game whose vertices represent the plant states and whose players represent the plant and the controller'' \cite{kchatterjee}.  
+
+\medskip
+
+\noindent \textit{Compositional Synthesis of Reactive Controllers:}
