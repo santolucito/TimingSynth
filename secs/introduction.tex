@@ -1,15 +1,15 @@
 \section{Introduction}
 
-The \textit{bounded integer parameter synthesis problem} from ~\ref{DBLP:journals/corr/BezdekBHBC14}, is defeined as follows:
-Given a parametric timed automaton $\mathcal{M}$, a labelling
-function $\mathcal{L}$, an LTL property $\phi$, a lower bound function $lb$ and an upper bound
-function $ub$, compute the set of all parameter valuations $v$ such that $(M, v,L) \models \phi$ and $lb(p) < v(p) < ub(p)$.
-However, in the context of embedded systems, the bounds $lb$ and $ub$ must be taken from the manufacturer.
-If the mafucatureer is not able to provide such bounds, or we do not want to take these as an assumptions, we need to synthesize these bounds instead.
+% The \textit{bounded integer parameter synthesis problem} from ~\ref{DBLP:journals/corr/BezdekBHBC14}, is defeined as follows:
+% Given a parametric timed automaton $\mathcal{M}$, a labelling
+% function $\mathcal{L}$, an LTL property $\phi$, a lower bound function $lb$ and an upper bound
+% function $ub$, compute the set of all parameter valuations $v$ such that $(M, v,L) \models \phi$ and $lb(p) < v(p) < ub(p)$.
+% However, in the context of embedded systems, the bounds $lb$ and $ub$ must be taken from the manufacturer.
+% If the mafucatureer is not able to provide such bounds, or we do not want to take these as an assumptions, we need to synthesize these bounds instead.
 
-For this reason, we formulate the \textit{integer bound parameter synthesis problem}.
-Here we will try to synthesis the parameters
-Given a parametric timed automaton $\mathcal{M}$, a labelling function $\mathcal{L}$, an LTL property $\phi$, 
-find a lower bound function $lb$ and an upper bound $up$ such that $\forall v.\ lb(p) < v(p) < ub(p).\ (M, v,L) \models \phi$ and $min(\Sigma_{0->p}.\ ub{p}-lb(p)$.
+% For this reason, we formulate the \textit{integer bound parameter synthesis problem}.
+% Here we will try to synthesis the parameters
+% Given a parametric timed automaton $\mathcal{M}$, a labelling function $\mathcal{L}$, an LTL property $\phi$, 
+% find a lower bound function $lb$ and an upper bound $up$ such that $\forall v.\ lb(p) < v(p) < ub(p).\ (M, v,L) \models \phi$ and $min(\Sigma_{0->p}.\ ub{p}-lb(p)$.
 
 
