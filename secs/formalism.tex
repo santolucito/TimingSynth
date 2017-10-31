@@ -1,0 +1,80 @@
+\section{Parameter Bound Synthesis}
+ 
+The \textit{bounded integer parameter synthesis problem} from~\cite{DBLP:journals/corr/BezdekBHBC14}, is defined as follows:
+Given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property (verification condition) $\phi$, a lower bound function $\lowerB: P \to \Int$ and an upper bound function $\upperB: P \to \Int $, 
+  compute the set of all parameter valuations $v: P \to \Int$ such that 
+\begin{align*}
+  &\lowerB(p) < v(p) < \upperB(p) \land \\
+  &(M,v,L) \models \phi
+\end{align*}
+
+However, in the context of embedded systems, the bounds $\lowerB$ and $\upperB$ must be taken from the manufacturer.
+If the manufacturer is not able to provide such bounds, or we do not want to take these as an assumptions, we need to synthesize these bounds instead.
+
+For this reason, we formulate the \textit{parameter bound synthesis problem}, where the goal is to find upper and lower bounds such that all valuations within those bounds satisfy the verification condition.
+In the CPS domain, this corresponds to the question ``what are the most flexible bounds on the delay my system can induce, such that the overall system is safe?''
+Formally, given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property $\phi$, and a target valuation function $\target(p): P \to \Real$,
+find the lower bound $\lowerB: P \to \Real$ and upper bound $\upperB : P \to \Real$ functions such that 
+%
+\begin{align*}
+  &\lowerB(p) \leq \target(p) \leq \upperB(p) \land \\ 
+  &\forall v.\ \lowerB(p) < v(p) < \upperB(p).\ (M, v,L) \models \phi
+\end{align*}
+%
+subject to the linear optimization/maximization condition 
+\begin{align*}
+\text{max}(\mathcal{OP}(\lowerB,\upperB,t))
+\end{align*}
+
+We leave the exact optimization condition (definition of flexible bounds) up to the user, as certain use cases may call for slightly different system needs.
+For example, if the implementation of our system induces a large range for every parameter, we may seek to maximize the minimum range of the bounds.
+This finds gives us the most relaxed condition on the bounds so that, if our implementation can meet those bounds, the system is still safe.
+%
+\begin{align*}
+	\mathcal{OP}(\lowerB,\upperB,t) = \text{min}(\upperB(p) - \lowerB(p))
+\end{align*}
+%
+It may be the case that we find that the bounds are too tight for the system implementation to guarantee. 
+In this case, we may seek another another optimization condition, that satisfies the verification condition and is possible for the implementation to guarantee.
+For example, our implementation may be able to guarantee that sum of the upper bounds will be less than some value.
+\begin{align*}
+\mathcal{OP}(\lowerB,\upperB,t) = \Sigma_{p} \ \upperB(p)
+\end{align*}
+%
+In a sense, the optimization function $\mathcal{OP}$ is an analog to finding the weakest precondition.
+The larger the value of the $\mathcal{OP}$, the more system implementations will satisfy the verification condition.
+We enforce the restriction here that it is always a maximization problem, and the $\mathcal{OP}$ is always linear (TODO is this necessary?).
+
+\subsection{Decidability}
+
+This problem can be framed as a decision problem in two different ways.
+First, as a general optimization, ``Does there exist a global maximum value for which all valuations within the bounds satisfy $\phi$?''.
+This problem is undecidable, as we can reduce this to the unbounded integer parameter synthesis problem, which is known to be undecidable~\cite{benevs2015language}.
+TODO proof - actually im not sure about this, even over integers.
+
+Second, we can frame the problem as ``Does there exist a global maximum value less than $k$ for which all valuations within the bounds satisfy $\phi$?''
+This seems decidable for integers, as we could enumerate every \lowerB and \upperB, and check each valuation within those bounds.
+Th complexity of LTL model checking is exponential in the size of the spec.
+There are only finitely many options for \lowerB and \upperB, since \lowerB is finitely bounded by $\forall p. 0 \leq \lowerB(p) \leq \target(p)$.
+
+
+
+
+% The continuous-time plant in presence of noise and attack on output:
+% \begin{align}
+%     \dot{x}_p &= f_p(x_p, \hat{u}) + w_p \qquad y = g_p(x_p, \eta (t)) + v_p 
+% \end{align}
+
+% where, $x_p \in \mathbb{R}^{n_p}$ represents the state of the plant, $\hat{u} \in \mathbb{R}^{n_u}$ represents the control values implemented at the plant, $w_p \sim N(0, Q)$ is the additive zero mean Gaussian noise, $y \in \mathbb{R}^{n_y}$ is the output of the plant, $v_p \sim N(0, R)$ is the additive zero mean Gaussian measurement noise, and $\eta (t)$ is the variable for attack on sensor. During attack, $\eta (t)$ corrupts the output of the plant ($y$), which is measured by sensors. 
+
+
+% The plant is controlled by a controller over the shared communication network, whose equations are:
+% \begin{align}
+%     \dot{x}_c &= f_c(x_c, \hat{y}) \qquad u = g_c(x_c, \hat{y}, \mu (t)) 
+% \end{align}
+
+% where, $x_c \in \mathbb{R}^{n_c}$ represents the state of the controller,  $\hat{y} \in \mathbb{R}^{n_y}$ is the most recent output (either good or corrupted by attack) of the plant available to the controller, $u \in \mathbb{R}^{n_u}$ represents the controller output, and $\mu (t)$ is the variable for attack on actuator. The controller output ($u$) can be manipulated by cyber or physical attack, which is represented by $\mu (t)$. Due to the presence of communication network, $u \neq \hat{u}$ and $y \neq \hat{y}$. In this setup, sensors are time-driven and both actuator and controller are event-driven. As the controllers, sensors, and actuators are connected via a shared network, they are s\upperBject to varying transmission intervals and varying delays. Due to varying transmission intervals, the instants ($t_k \in \mathbb{R}_{\geq 0}, \; k \in \mathbb{N}$) at which the plant outputs and control values are sampled and transmitted over network are non-equidistantly spaced in time. These transmitted values are received by other units in the network after a delay of $\tau_k \in \mathbb{R}_{\geq 0}$, with $\tau_k \in [\tau_{min}, \tau_{max}]$, for all $k \in \mathbb{N}$. This delay is due to the speed at which data travels in the network and it should be less than transmission interval to ensure correct operation of the controllers. In NCS, a scheduling protocol is used in the network to ensure data from all sensors and actuators are not transmitted at the same time. Moreover, while updating the values of $\hat{y}$ and $\hat{u}$, the network is assumed to operate in a zero-order-hold (ZOH) manner i.e. these values remain constant while being updated. 
+
+
+% TODO - find a formal model to embed the above equations into some logical formula that can be checked (with wieghted max-smt?).
+% We want to know, given a single scheduler (instance of the model), how much delay must be introduced to inalidate the saftey/stability specifications of the system. If the attacker can only introduce delay at one point (step) in the system, how much delay must be introduced. If the attacker can introduce a global delay, how much is needed? What about s\upperBsets of modules (steps in system).
