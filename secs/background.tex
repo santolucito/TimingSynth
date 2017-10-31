@@ -1,16 +1,46 @@
- \section{Modeling Vehicle Network}
+\section{Modeling Vehicle Network}
  
- The \textit{bounded integer parameter synthesis problem} from ~\ref{DBLP:journals/corr/BezdekBHBC14}, is defeined as follows:
-Given a parametric timed automaton $\mathcal{M}$, a labelling
-function $\mathcal{L}$, an LTL property $\phi$, a lower bound function $lb$ and an upper bound
-function $ub$, compute the set of all parameter valuations $v$ such that $(M, v,L) \models \phi$ and $lb(p) < v(p) < ub(p)$.
-However, in the context of embedded systems, the bounds $lb$ and $ub$ must be taken from the manufacturer.
-If the mafucatureer is not able to provide such bounds, or we do not want to take these as an assumptions, we need to synthesize these bounds instead.
+The \textit{bounded integer parameter synthesis problem} from ~\ref{DBLP:journals/corr/BezdekBHBC14}, is defined as follows:
+Given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property $\phi$, a lower bound function $\lowerB: P \to \Int$ and an upper bound function $\upperB: P \to \Int $, 
+  compute the set of all parameter valuations $v: P \to \Int$ such that 
+\begin{align*}
+  &\lowerB(p) < v(p) < \upperB(p) \land \\
+  &(M,v,L) \models \phi
+\end{align*}
 
-For this reason, we formulate the \textit{integer bound parameter synthesis problem}.
-Here we will try to synthesis the parameters
-Given a parametric timed automaton $\mathcal{M}$, a labelling function $\mathcal{L}$, an LTL property $\phi$, 
-find a lower bound function $lb$ and an upper bound $up$ such that $\forall v.\ lb(p) < v(p) < ub(p).\ (M, v,L) \models \phi$ and $min(\Sigma_{0->p}.\ ub{p}-lb(p)$.
+However, in the context of embedded systems, the bounds $\lowerB$ and $\upperB$ must be taken from the manufacturer.
+If the manufacturer is not able to provide such bounds, or we do not want to take these as an assumptions, we need to synthesize these bounds instead.
+
+For this reason, we formulate the \textit{parameter bound synthesis problem}, where the goal is to find upper and lower bounds such that all valuations within those bounds satisfy the verification condition.
+In the CPS domain, this corresponds to the question ``what are the most flexible bounds on the delay my system can induce, such that the overall system is safe?''
+Formally, given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property $\phi$, and a target valuation function $\target(p): P \to \Real$,
+find the lower bound $\lowerB: P \to \Real$ and upper bound $\upperB : P \to \Real$ functions such that 
+%
+\begin{align*}
+  &\lowerB(p) \leq \target(p) \leq \upperB(p) \land \\ 
+  &\forall v.\ \lowerB(p) < v(p) < \upperB(p).\ (M, v,L) \models \phi
+\end{align*}
+%
+subject to the linear optimization condition $\mathcal{OP}(\lowerB,\upperB,t)$.
+
+We leave the exact optimization condition (definition of flexible bounds) up to the user, as certain use cases may call for slightly different system needs.
+For example, if our system has a large range for every parameter, we may seek to maximize the total range of the bounds.
+%
+\begin{align*}
+\mathcal{OP}(\lowerB,\upperB,t) = \text{max}(\Sigma_{p} \ \upperB(p) - \lowerB(p))
+\end{align*}
+%
+It may be instead the case that our system ??? , we may need to find the largest allowable upper bounds.
+\begin{align*}
+\mathcal{OP}(\lowerB,\upperB,t) = \text{min}(\Sigma_{p} \ \upperB(p))
+\end{align*}
+%
+In a sense, the optimization function $\mathcal{OP}$ is an analog to the weakest precondition.
+
+TODO: is this decidable? is it decidable if we restrict to \Int ? Does the problem become easier or harder if we restrict to \Int ?
+
+
+
 
 % The continuous-time plant in presence of noise and attack on output:
 % \begin{align}
@@ -25,8 +55,8 @@ find a lower bound function $lb$ and an upper bound $up$ such that $\forall v.\ 
 %     \dot{x}_c &= f_c(x_c, \hat{y}) \qquad u = g_c(x_c, \hat{y}, \mu (t)) 
 % \end{align}
 
-% where, $x_c \in \mathbb{R}^{n_c}$ represents the state of the controller,  $\hat{y} \in \mathbb{R}^{n_y}$ is the most recent output (either good or corrupted by attack) of the plant available to the controller, $u \in \mathbb{R}^{n_u}$ represents the controller output, and $\mu (t)$ is the variable for attack on actuator. The controller output ($u$) can be manipulated by cyber or physical attack, which is represented by $\mu (t)$. Due to the presence of communication network, $u \neq \hat{u}$ and $y \neq \hat{y}$. In this setup, sensors are time-driven and both actuator and controller are event-driven. As the controllers, sensors, and actuators are connected via a shared network, they are subject to varying transmission intervals and varying delays. Due to varying transmission intervals, the instants ($t_k \in \mathbb{R}_{\geq 0}, \; k \in \mathbb{N}$) at which the plant outputs and control values are sampled and transmitted over network are non-equidistantly spaced in time. These transmitted values are received by other units in the network after a delay of $\tau_k \in \mathbb{R}_{\geq 0}$, with $\tau_k \in [\tau_{min}, \tau_{max}]$, for all $k \in \mathbb{N}$. This delay is due to the speed at which data travels in the network and it should be less than transmission interval to ensure correct operation of the controllers. In NCS, a scheduling protocol is used in the network to ensure data from all sensors and actuators are not transmitted at the same time. Moreover, while updating the values of $\hat{y}$ and $\hat{u}$, the network is assumed to operate in a zero-order-hold (ZOH) manner i.e. these values remain constant while being updated. 
+% where, $x_c \in \mathbb{R}^{n_c}$ represents the state of the controller,  $\hat{y} \in \mathbb{R}^{n_y}$ is the most recent output (either good or corrupted by attack) of the plant available to the controller, $u \in \mathbb{R}^{n_u}$ represents the controller output, and $\mu (t)$ is the variable for attack on actuator. The controller output ($u$) can be manipulated by cyber or physical attack, which is represented by $\mu (t)$. Due to the presence of communication network, $u \neq \hat{u}$ and $y \neq \hat{y}$. In this setup, sensors are time-driven and both actuator and controller are event-driven. As the controllers, sensors, and actuators are connected via a shared network, they are s\upperBject to varying transmission intervals and varying delays. Due to varying transmission intervals, the instants ($t_k \in \mathbb{R}_{\geq 0}, \; k \in \mathbb{N}$) at which the plant outputs and control values are sampled and transmitted over network are non-equidistantly spaced in time. These transmitted values are received by other units in the network after a delay of $\tau_k \in \mathbb{R}_{\geq 0}$, with $\tau_k \in [\tau_{min}, \tau_{max}]$, for all $k \in \mathbb{N}$. This delay is due to the speed at which data travels in the network and it should be less than transmission interval to ensure correct operation of the controllers. In NCS, a scheduling protocol is used in the network to ensure data from all sensors and actuators are not transmitted at the same time. Moreover, while updating the values of $\hat{y}$ and $\hat{u}$, the network is assumed to operate in a zero-order-hold (ZOH) manner i.e. these values remain constant while being updated. 
 
 
 % TODO - find a formal model to embed the above equations into some logical formula that can be checked (with wieghted max-smt?).
-% We want to know, given a single scheduler (instance of the model), how much delay must be introduced to inalidate the saftey/stability specifications of the system. If the attacker can only introduce delay at one point (step) in the system, how much delay must be introduced. If the attacker can introduce a global delay, how much is needed? What about subsets of modules (steps in system).
+% We want to know, given a single scheduler (instance of the model), how much delay must be introduced to inalidate the saftey/stability specifications of the system. If the attacker can only introduce delay at one point (step) in the system, how much delay must be introduced. If the attacker can introduce a global delay, how much is needed? What about s\upperBsets of modules (steps in system).
