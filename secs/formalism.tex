@@ -1,44 +1,76 @@
 \section{Parameter Bound Synthesis}
  
-The \textit{bounded integer parameter synthesis problem} from~\cite{DBLP:journals/corr/BezdekBHBC14}, is defined as follows:
-Given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property (verification condition) $\phi$, a lower bound function $\lowerB: P \to \Int$ and an upper bound function $\upperB: P \to \Int $, 
-  compute the set of all parameter valuations $v: P \to \Int$ such that 
+As described in Sec~\ref{sec:intro}, we are interested in discovering the bounds on the delay that can be introduced to a platform independent model, such that some safety property still holds.
+
+The \textit{bounded integer parameter synthesis problem} from~\cite{BBHBC14}, is defined as follows:
+Given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property (verification condition) $\phi$, a lower bound function $\lowerB: P \to \Int$ and an upper bound function $\upperB: P \to \Int $, compute the set of all parameter valuations $v: P \to \Int$ such that 
 \begin{align*}
-  &\lowerB(p) < v(p) < \upperB(p) \land \\
+  &\lowerB(p) < v(p) < \upperB(p)\ \land \\
   &(M,v,L) \models \phi
 \end{align*}
 
-However, in the context of embedded systems, the bounds $\lowerB$ and $\upperB$ must be taken from the manufacturer.
-If the manufacturer is not able to provide such bounds, or we do not want to take these as an assumptions, we need to synthesize these bounds instead.
+In the context of embedded systems, this is an appropriate problem to ask when the delays bounds for a system are given and trusted.
+However, if the bounds $\lowerB$ and $\upperB$ are unknown or untrusted, we must instead synthesize these bounds, such that all valuations within those bounds satisfy the property $\phi$ instead.
 
+\subsection{Problem Statement}
 For this reason, we formulate the \textit{parameter bound synthesis problem}, where the goal is to find upper and lower bounds such that all valuations within those bounds satisfy the verification condition.
 In the CPS domain, this corresponds to the question ``what are the most flexible bounds on the delay my system can induce, such that the overall system is safe?''
-Formally, given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property $\phi$, and a target valuation function $\target(p): P \to \Real$,
+Formally, given a parametric timed automaton $\mathcal{M}$, a labeling function $\mathcal{L}$, an LTL property $\phi$, 
 find the lower bound $\lowerB: P \to \Real$ and upper bound $\upperB : P \to \Real$ functions such that 
-%
 \begin{align*}
-  &\lowerB(p) \leq \target(p) \leq \upperB(p) \land \\ 
-  &\forall v.\ \lowerB(p) < v(p) < \upperB(p).\ (M, v,L) \models \phi
+  &\forall v.\ \lowerB(p) < v(p) < \upperB(p).\\
+  &\qquad (M, v,L) \models \phi
 \end{align*}
-%
-subject to the linear optimization/maximization condition 
+Since the number of parameters, $n$, is always finite, we can restate the problem, for the purposes of clarity, as follows
 \begin{align*}
-\text{max}(\mathcal{OP}(\lowerB,\upperB,t))
+  &\exists \ lb_0,\ ...,\ lb_n,\ ub_0,\ ...,\ ub_n \ \in \ \Real .\\
+  &\forall p_0 \ \in \ [lb_0, ub_0].\\
+  &...\\
+  &\forall p_n \ \in \ [lb_n, ub_n].\\
+  &\qquad (M, v, L) \models \phi
 \end{align*}
 
-We leave the exact optimization condition (definition of flexible bounds) up to the user, as certain use cases may call for slightly different system needs.
-For example, if the implementation of our system induces a large range for every parameter, we may seek to maximize the minimum range of the bounds.
-This finds gives us the most relaxed condition on the bounds so that, if our implementation can meet those bounds, the system is still safe.
+\subsection{Toy Example}
+
+A simplified version of the \textit{private authentication protocol} from \cite{timing_analysis_of_security_protocls} as a parameterized automata. Colors indicate; {\color{olive} $I$, the guards}, {\color{blue} $\Sigma$, the set of action}, and {\color{violet} clock sets}.
+
+\begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=3.5cm]
+  \node[state,accepting] (s0)      {$start$};
+  \node[state]         (s1) [right of=s0]  {$s_1$};
+  \node[state]         (s2) [above of=s0,yshift=-1cm]  {$s_2$};
+  \node[state]         (s4) [left of=s0]  {$end$};
+  
+
+    \path[->] (s0)  edge node[align=center,yshift=-3.5em] {\transition{recv msg}{}{}{}} (s1)
+              (s1)  edge [bend right] node[align=right,xshift=5em,yshift=3em] {\transition{decrypt succ}{$p_{2l} \leq x \leq p_{2u}$}{compose newMsg}{x:=0}} (s2)
+              (s2)  edge [bend right] node[align=left,xshift=-4em,yshift=3em] {\transition{}{$p_{3l} \leq x \leq p_{3u}$}{encrypt newMsg}{x:=0}} (s4)
+              (s1) edge [bend left]  node[align=center] {\transition{decrypt fail}{$p_{4l} \leq x \leq p_{3u}$}{encrypt rand}{x:=0}} (s4)
+              (s4) edge node[align=center] {\transition{}{}{broadcast newMsg}{c:=0, x:=0}} (s0);
+    
+\end{tikzpicture}
+
+In this example, we want to find the delays such that the system is safe from side channel timing attacks. In particular, given an attacker can distinguish the trace of an execution by observing a difference, $k$, in the clocks of those traces, what is the set of allowable values for $p_i$ to ensure that all paths of two traces, $\pi_1$ and $\pi_2$ are observationally equivalent. 
+\begin{align*}
+    \phi = \forall \pi_1 . \forall \pi_2 . G (end_{\pi_1} \land end_{\pi_2}) \implies G (|c_{\pi_1} - c_{\pi_2}| \leq k)
+\end{align*}
+
+
+\subsection{Optimizations on bounds}
+The problem, as stated will find some arbitrary satisfying bounds.
+In practice,, we may want to consider a sense an optimal solution.
+\cmark{TODO : this doesnt make any sense, rewrite}
+For example, if the implementation of our system induces a large range for every parameter, we may seek to maximize the minimum range of the bounds. 
+This gives us the most relaxed condition on the bounds so that, if our implementation can meet those bounds, the system is still safe.
 %
 \begin{align*}
-	\mathcal{OP}(\lowerB,\upperB,t) = \text{min}(\upperB(p) - \lowerB(p))
+	\mathcal{OP}(\lowerB,\upperB) = \text{min}(\upperB(p) - \lowerB(p)) 
 \end{align*}
 %
 It may be the case that we find that the bounds are too tight for the system implementation to guarantee. 
-In this case, we may seek another another optimization condition, that satisfies the verification condition and is possible for the implementation to guarantee.
-For example, our implementation may be able to guarantee that sum of the upper bounds will be less than some value.
+In this case, we may seek another optimization condition, that satisfies the verification condition and is possible for the implementation to guarantee.
+For example, our implementation may be able to guarantee that sum of the upper bounds will be less than some constant.
 \begin{align*}
-\mathcal{OP}(\lowerB,\upperB,t) = \Sigma_{p} \ \upperB(p)
+\mathcal{OP}(\lowerB,\upperB,t) = \Sigma_{p} \ \upperB(p) < c
 \end{align*}
 %
 In a sense, the optimization function $\mathcal{OP}$ is an analog to finding the weakest precondition.

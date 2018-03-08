@@ -1,0 +1,25 @@
+
+%Timed Automoata are a useful tool for modelling cyber-physical systems, but as an abstraction technique, do not capture the exact timing behavior of the implemented system. Existing techniques to integrate implementation details into these models typically require some knowledge of the expected time delays cause by hardware and physical constraints on each transition in the automoata. However, these expected time delays are not always available, or a designer may not want to include the given delays into the trusted base. To address the issue of absent or untrusted timing estimates for an automata modelling a cyber-physical system, use paramaterized 
+
+
+\textbf{HyperLTL} when traces depend on each other, for example one authentication depends on the authentication of another.
+
+A popular and useful approach to building verified cyber-physical systems (CPS) is to create a platform independent model (PIM) of the intended behaviour of the system. Using this model, various temporal logics can be used to specify and check some properties on that model, such as liveness, deadlock, livelock, etc. While this is an effective method for reasoning on an abstract level, when the CPS is implemented in practice, additional delays are introduced (from hardware and other physical constraints) that are not expressed in the more abstract model. This can lead to models which ensure safety properties that do not hold in practice.
+
+To account for these delays, manufacturers of devices will provide a range of delays that can be expected. These delays can then be integrated into the model to check that saftey properties hold even in the implemented version of the model. 
+
+
+While manufacturer guarantees can often be taken as safe assumptions, such models are not available in many other situations. For example, when embedding platform independent software into a particular system, the timing model may change based on this hardware. Furthermore, as CPS component development becomes more accessible to individuals, there may not be a central manufacturer that can provide a bounded timing model.
+
+for this reason, we address the inverse problem, where these delays are unknown or untrusted, and the user wishes to discover the acceptable range of delays that will still admit the safety properties of interest.
+
+% A key assumption in verifying time constraints on  embedded cyber physical systems is the that the given timing model is correct. The time for each step between nodes of the automata are given upper and lower timing bounds - usually given by the manufacturer of the device. This expands the trusted base to include the manufacturer.
+
+
+% Contributions: 
+% \begin{itemize}
+%     \item Parametric Timed Automata for finding timing constraints of security protocol transitions, given the WCET. 
+    
+%     \item Showing that the platform independent model is contained within the platform dependent model 
+% \end{itemize}
+
