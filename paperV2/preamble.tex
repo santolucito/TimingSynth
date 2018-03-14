@@ -1,0 +1,154 @@
+% GXL Begin
+%\usepackage{cite}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage[utf8]{inputenc}
+\usepackage{marvosym}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{xspace}
+%\documentclass[10pt,twocolumn]{IEEEtran}
+%\documentclass{llncs}
+%\usepackage{llncsdoc}
+
+\usepackage{pifont}
+\usepackage{url}
+
+\usepackage{listings}
+\usepackage{caption}
+\lstset{
+  frame=top,frame=bottom,
+  captionpos=t
+}
+
+%% enable/disable Intel registered (R) signs
+\usepackage{amsfonts}
+\newcommand{\useregistered}{\iftrue}
+\useregistered
+  \newcommand{\reg}[1]{#1$^\circledR$} % add Â® using amsfonts
+  %\newcommand{\reg}[1]{#1$^\textsf{\textregistered}$}
+\else
+  \newcommand{\reg}[1]{#1} % disable Â®
+\fi
+
+\DeclareCaptionFormat{listing}{\rule{\columnwidth}{0.1pt}\vskip1pt#1#2#3}
+%\captionsetup[lstlisting]{format=listing,singlelinecheck=false, margin=0pt,labelsep=space,labelfont=bf}
+
+\setlength{\paperheight}{11in}
+\setlength{\paperwidth}{8.5in}
+%\usepackage[
+ % pass,% keep layout unchanged
+  % showframe,% show the layout
+%]{geometry}
+
+
+% Black numbers, no space
+\newcommand{\dOne}{\ding{182}}
+\newcommand{\dTwo}{\ding{183}}
+\newcommand{\dThree}{\ding{184}}
+\newcommand{\dFour}{\ding{185}}
+\newcommand{\dFive}{\ding{186}}
+\newcommand{\dSix}{\ding{187}}
+\newcommand{\dSeven}{\ding{188}}
+\newcommand{\ourTool}{ToolX}
+
+\newcommand{\Int}{\ensuremath{\mathbb{Z}}}
+\newcommand{\Real}{\ensuremath{\mathbb{R}}}
+
+
+\newcommand{\upperB}{\ensuremath{ub}}
+\newcommand{\lowerB}{\ensuremath{lb}\xspace}
+\newcommand{\target}{\ensuremath{t}}
+
+%guard, action, clock
+\newcommand{\transition}[4]{{\color{olive}#1} \\ {\color{olive}#2} \\ {\color{blue}#3} \\ {\color{violet}#4}}
+
+\long\def\cmark#1{{\color{green}{\bf Mark: }{\small [#1]}}}
+\long\def\raj#1{{\color{red}{\bf Raj: }{\small [#1]}}}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{shapes,arrows,patterns}
+\usetikzlibrary{pgfplots.statistics}
+
+%\begin{document}
+%
+% --- Author Metadata here ---
+%\conferenceinfo{DAC}{'15, June 07 - 11, 2015, San Francisco, CA, USA}
+%\CopyrightYear{2017} % Allows default copyright year (20XX) to be over-ridden - IF NEED BE.
+%\crdata{978-1-4503-3520-1/15/06}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
+% --- End of Author Metadata ---
+%\usepackage{graphicx}
+%\usepackage{cite}
+%\usepackage{color}
+%\usepackage{fancyhdr}
+%\usepackage[cmex10]{amsmath}
+%\usepackage[utf8]{inputenc}
+%\pdfminorversion=4
+%\usepackage{pifont}
+%\usepackage{marvosym}
+%\usepackage{tabu}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{euscript}
+\usepackage{amssymb}
+\usepackage{calligra}
+\usepackage{xfrac}
+%\usepackage{subfig}
+\usepackage{subcaption}
+%\usepackage{float}
+
+%\usepackage{tabulary}
+%\usepackage{array}
+%\usepackage{verbatim}
+%\usepackage[table]{xcolor}
+%\definecolor{tableShade}{HTML}{DDDDDD}
+%\usepackage{tabularx}
+%\usepackage{tikz}
+%\usepackage{pgfplots}
+%\usepackage{setspace}
+%\usepackage{comment}
+\usepackage{mathtools}
+%\usepackage{subcaption}
+%\usepackage[font={footnotesize}]{caption}
+%\usepackage{RobStd}
+%\interdisplaylinepenalty=2500 \usepackage{graphicx}
+%\graphicspath{{Figures/}}
+%\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+
+%\usepackage[margin=2.8cm]{geometry}
+\usetikzlibrary{shapes,arrows,patterns,backgrounds,fit}
+\usetikzlibrary{arrows,automata}
+
+%\usetikzlibrary{pgfplots.statistics}
+
+%\usepackage{epsfig}
+%\usepackage{fullpage}
+\usepackage{times}
+\usepackage{setspace}
+%\usepackage{floatflt}
+%\usepackage{subfigure}
+%\usepackage{epstopdf}
+%\usepackage{wrapfig}
+\usepackage{ifthen}
+\usepackage{stmaryrd} % package for evaluation operator in denotational semantics
+%\setlength{\textheight}{9in}
+%\def\baselinestretch{0.95}
+\usepackage{rotating}
+%\usepackage[table]{xcolor}
+%\usepackage{listings}
+%\usepackage{import}
+%\usetikzlibrary{shapes,arrows}
+%\usepackage{url}
+\numberwithin{equation}{section}
+
+% For pseudocode writing
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{array}
+\usepackage{eqparbox}
+ 
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[subsection]
